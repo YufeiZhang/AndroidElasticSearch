@@ -45,35 +45,36 @@ public class ESMovieManager {
 	public Movie getMovie(int id) {
 		SearchHit<Movie> sr = null;
 		HttpClient httpClient = new DefaultHttpClient();
+		
 		HttpGet httpGet = new HttpGet(movies.getResourceUrl() + id);
 
 		HttpResponse response = null;
 
-		try {
+		try { // tell the server and get the feedback
 			response = httpClient.execute(httpGet);
 		} catch (ClientProtocolException e1) {
-			throw new RuntimeException(e1);
+			throw new RuntimeException(e1); //we don't want to write the exceptions right now.
 		} catch (IOException e1) {
-			throw new RuntimeException(e1);
+			throw new RuntimeException(e1);// if you can, set the catch more clear because it makes debuging easier 
 		}
 		
-		Type searchHitType = new TypeToken<SearchHit<Movie>>() {}.getType();
+		Type searchHitType = new TypeToken<SearchHit<Movie>>() {}.getType();  // puts imforemation, same as in lab 2 o 3
 
 		try {
 			sr = gson.fromJson(
 					new InputStreamReader(response.getEntity().getContent()),
 					searchHitType);
-		} catch (JsonIOException e) {
+		} catch (JsonIOException e) {         // for response.getEntity().getContent()
 			throw new RuntimeException(e);
-		} catch (JsonSyntaxException e) {
+		} catch (JsonSyntaxException e) {     // for searchHitType
 			throw new RuntimeException(e);
-		} catch (IllegalStateException e) {
+		} catch (IllegalStateException e) {   // this is for gson
 			throw new RuntimeException(e);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 
-		return sr.getSource();
+		return sr.getSource();  // finally we will get the imformation and return it
 
 	}
 

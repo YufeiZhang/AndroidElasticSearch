@@ -43,6 +43,7 @@ public class MainActivity extends Activity {
 		moviesViewAdapter = new ArrayAdapter<Movie>(this, R.layout.list_item,movies);
 		movieList.setAdapter(moviesViewAdapter);
 		movieManager = new ESMovieManager("");
+		
 
 		// Show details when click on a movie
 		movieList.setOnItemClickListener(new OnItemClickListener() {
@@ -79,8 +80,43 @@ public class MainActivity extends Activity {
 
 		// Refresh the list when visible
 		// TODO: Search all
+		movies = movieManager.getMovies();
+		moviesViewAdapter = new ArrayAdapter<Movie>(this, R.layout.list_item,movies);
+		movieList.setAdapter(moviesViewAdapter);
+		movieManager = new ESMovieManager("");
+
+		// Show details when click on a movie
+		movieList.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int pos,	long id) {
+				int movieId = movies.get(pos).getId();
+				startDetailsActivity(movieId);
+			}
+
+		});
+
+		// Delete movie on long click
+		movieList.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+				Movie movie = movies.get(position);
+				Toast.makeText(mContext, "Deleting " + movie.getTitle(), Toast.LENGTH_LONG).show();
+
+				Thread thread = new DeleteThread(movie.getId());
+				thread.start();
+
+				return true;
+			}
+		});
 		
+		for (int i = 0; i< movies.size(); i++) {
+			movieManager.searchMovies(movies.get(i).getTitle(), movies.getResourceUrl());
+		}
 	}
+	
+	
 	
 	/** 
 	 * Called when the model changes
